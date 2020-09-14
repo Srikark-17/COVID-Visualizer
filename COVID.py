@@ -1,5 +1,11 @@
 import streamlit as st
 
+st.beta_set_page_config(
+	page_title="COVID-19 Visualizer",
+    page_icon=(":crown:"),
+	initial_sidebar_state="auto",  
+	layout="centered"
+)
 
 st.sidebar.markdown('''
 
@@ -60,16 +66,6 @@ This is a simulation of the current pandemic using a polar plot. Instead of x an
 </li>
 ''', unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center; font-size:60px;'>COVID-19 Visualizer</h1>", unsafe_allow_html=True)
-
-
-hide_streamlit_style = """
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-</style>
-
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 import matplotlib.pyplot as plt
 import matplotlib.animation as ani
