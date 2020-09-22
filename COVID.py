@@ -9,8 +9,6 @@ st.beta_set_page_config(
 
 st.sidebar.markdown('''
 
-
-
 # Problem/Inspiration
 A potential challenge during the pandemic outbreak like COVID-19 is overwhelming hospitals. Right now, hospitals don't have the capacity for a large number of incoming patients. There is a need for a technology platform that is capable of raising awareness for this pandemic and proving it is **_NOT A MYTH_**. With people not believing the coronavirus is causing such a pressing issue in the world and lack of masks, vaccines, and quarantine/isolation is a contributing factor of why the coronavirus is still spreading. This web app helps create awareness for those who think that the coronavirus isn't real or doesn't care to take precautionary measures.
 
@@ -101,6 +99,7 @@ class Virus():
     global death
     global recover
     global days
+
 
     def __init__(self, params):
         # Create Plot
@@ -312,6 +311,7 @@ class Virus():
             frames=self.gen,
             repeat=True)
         the_plot.pyplot(plt)
+
 
 def plot_graphs(infected, death, recover, days):
     fig = go.Figure()
