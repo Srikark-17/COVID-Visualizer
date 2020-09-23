@@ -1,11 +1,25 @@
+import plotly.graph_objects as go
+import numpy as np
+import matplotlib.animation as ani
+import matplotlib.pyplot as plt
 import streamlit as st
 
 st.beta_set_page_config(
-	page_title="COVID-19 Visualizer",
-    page_icon=(":crown:"),
-	initial_sidebar_state="auto",  
-	layout="centered"
+    page_title="COVID-19 Visualizer",
+    page_icon=(':mask:'),
+    initial_sidebar_state="auto",
+    layout="centered"
 )
+
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
+html = "<a href='https://www.algoexpert.io/product'><img style='margin-left: -35px; margin-top: -50px;' width=775 height=150 src='https://media-exp1.licdn.com/dms/image/C4E1BAQG9848diIW0Aw/company-background_10000/0?e=2159024400&v=beta&t=WqA3DHDQY0Vzz1O35JZp6EvSsEanpAjrzfGuYvLG3Eg'></a>"
+st.markdown(html, unsafe_allow_html=True)
 
 st.sidebar.markdown('''
 
@@ -62,13 +76,13 @@ This is a simulation of the current pandemic using a polar plot. Instead of x an
 <li>
     Black - Died
 </li>
-''', unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-size:60px;'>COVID-19 Visualizer</h1>", unsafe_allow_html=True)
+<br />
 
-import matplotlib.pyplot as plt
-import matplotlib.animation as ani
-import numpy as np
-import plotly.graph_objects as go
+**_As always, if you're ever preparing for coding interview click on the logo and use the promo code "clem" for a discount on the platform._**
+''', unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-size:60px;'>COVID-19 Visualizer</h1>",
+            unsafe_allow_html=True)
+
 
 the_plot = st.pyplot(plt)
 
@@ -94,12 +108,12 @@ death = []
 recover = []
 days = []
 
+
 class Virus():
     global infected
     global death
     global recover
     global days
-
 
     def __init__(self, params):
         # Create Plot
@@ -110,7 +124,6 @@ class Virus():
         self.axes.set_xticklabels([])
         self.axes.set_yticklabels([])
         self.axes.set_ylim(0, 1)
-        
 
         # Create annotations
         self.day_text = self.axes.annotate(
@@ -141,7 +154,8 @@ class Virus():
         self.death_fast = params["incubation"] + params["severe_death"][0]
         self.death_slow = params["incubation"] + params["severe_death"][1]
 
-        self.mild = {i: {"thetas": [], "rs": []} for i in range(self.mild_fast, 365)}
+        self.mild = {i: {"thetas": [], "rs": []}
+                     for i in range(self.mild_fast, 365)}
         self.severe = {
             "recovery": {i: {"thetas": [], "rs": []} for i in range(self.severe_fast, 365)},
             "death": {i: {"thetas": [], "rs": []} for i in range(self.death_fast, 365)}
@@ -151,7 +165,6 @@ class Virus():
         self.exposed_after = 1
 
         self.initial_population()
-
 
     def initial_population(self):
         population = 5000
@@ -167,14 +180,14 @@ class Virus():
         self.mild[self.mild_fast]["thetas"].append(self.thetas[0])
         self.mild[self.mild_fast]["rs"].append(self.rs[0])
 
-
     def spread_virus(self, i):
         self.exposed_before = self.exposed_after
         if self.day % self.serial_interval == 0 and self.exposed_before < 5000:
             self.num_new_infected = round(self.r0 * self.total_num_infected)
             self.exposed_after += round(self.num_new_infected * 1.1)
             if self.exposed_after > 5000:
-                self.num_new_infected = round((5000 - self.exposed_before) * 0.9)
+                self.num_new_infected = round(
+                    (5000 - self.exposed_before) * 0.9)
                 self.exposed_after = 5000
             self.num_currently_infected += self.num_new_infected
             self.total_num_infected += self.num_new_infected
@@ -206,15 +219,14 @@ class Virus():
             self.assign_symptoms()
 
         self.day += 1
-        
+
         infected.append(self.num_currently_infected)
         death.append(self.num_deaths)
         recover.append(self.num_recovered)
         days.append(self.day)
-        
+
         self.update_status()
         self.update_text()
-
 
     def one_by_one(self, i, thetas, rs, color):
         self.axes.scatter(thetas[i], rs[i], s=5, color=color)
@@ -222,26 +234,29 @@ class Virus():
             self.anim2.event_source.stop()
             self.anim.event_source.start()
 
-
     def chunks(self, a_list, n):
         for i in range(0, len(a_list), n):
             yield a_list[i:i + n]
-
 
     def assign_symptoms(self):
         num_mild = round(self.percent_mild * self.num_new_infected)
         num_severe = round(self.percent_severe * self.num_new_infected)
         # Choose a random subset of newly infected to have mild symptoms
-        self.mild_indices = np.random.choice(self.new_infected_indices, num_mild, replace=False)
+        self.mild_indices = np.random.choice(
+            self.new_infected_indices, num_mild, replace=False)
         # Assign the rest severe symptoms, either resulting in recovery or death
-        remaining_indices = [i for i in self.new_infected_indices if i not in self.mild_indices]
-        percent_severe_recovery = 1 - (self.fatality_rate / self.percent_severe)
+        remaining_indices = [
+            i for i in self.new_infected_indices if i not in self.mild_indices]
+        percent_severe_recovery = 1 - \
+            (self.fatality_rate / self.percent_severe)
         num_severe_recovery = round(percent_severe_recovery * num_severe)
         self.severe_indices = []
         self.death_indices = []
         if remaining_indices:
-            self.severe_indices = np.random.choice(remaining_indices, num_severe_recovery, replace=False)
-            self.death_indices = [i for i in remaining_indices if i not in self.severe_indices]
+            self.severe_indices = np.random.choice(
+                remaining_indices, num_severe_recovery, replace=False)
+            self.death_indices = [
+                i for i in remaining_indices if i not in self.severe_indices]
 
         # Assign recovery/death day
         low = self.day + self.mild_fast
@@ -258,7 +273,8 @@ class Virus():
             recovery_day = np.random.randint(low, high)
             recovery_theta = self.thetas[recovery]
             recovery_r = self.rs[recovery]
-            self.severe["recovery"][recovery_day]["thetas"].append(recovery_theta)
+            self.severe["recovery"][recovery_day]["thetas"].append(
+                recovery_theta)
             self.severe["recovery"][recovery_day]["rs"].append(recovery_r)
         low = self.day + self.death_fast
         high = self.day + self.death_slow
@@ -268,7 +284,6 @@ class Virus():
             death_r = self.rs[death]
             self.severe["death"][death_day]["thetas"].append(death_theta)
             self.severe["death"][death_day]["rs"].append(death_r)
-
 
     def update_status(self):
         if self.day >= self.mild_fast:
@@ -290,19 +305,17 @@ class Virus():
             self.num_deaths += len(death_thetas)
             self.num_currently_infected -= len(death_thetas)
 
-
     def update_text(self):
         self.day_text.set_text("Day {}".format(self.day))
-        self.infected_text.set_text("Infected: {}".format(self.num_currently_infected))
+        self.infected_text.set_text(
+            "Infected: {}".format(self.num_currently_infected))
         self.deaths_text.set_text("\nDeaths: {}".format(self.num_deaths))
-        self.recovered_text.set_text("\n\nRecovered: {}".format(self.num_recovered))
-
+        self.recovered_text.set_text(
+            "\n\nRecovered: {}".format(self.num_recovered))
 
     def gen(self):
         while self.num_deaths + self.num_recovered < self.total_num_infected:
             yield
-
-
 
     def animate(self, i):
         self.anim = ani.FuncAnimation(
@@ -318,26 +331,28 @@ def plot_graphs(infected, death, recover, days):
     fig.add_trace(go.Scatter(x=days, y=infected, name='Infected'))
     fig.add_trace(go.Scatter(x=days, y=recover, name='Recovery'))
     fig.add_trace(go.Scatter(x=days, y=death, name='Deaths'))
-    fig.update_layout(hovermode='x unified', 
-    width=1000, 
-    height = 750, 
-    margin=dict(
-        # Experiment with these numbers to center the graph
-        l=75,
-        r=375
-    ), 
-    xaxis_title="Days", 
-    yaxis_title="Number of Cases", 
-    legend_title="Case Types")
+    fig.update_layout(hovermode='x unified',
+                      width=1000,
+                      height=750,
+                      margin=dict(
+                          # Experiment with these numbers to center the graph
+                          l=75,
+                          r=375
+                      ),
+                      xaxis_title="Days",
+                      yaxis_title="Number of Cases",
+                      legend_title="Case Types")
     st.plotly_chart(fig)
-    
+
 
 def main():
     Corona = Virus(COVID19_PARAMS)
     for i in range(110):
         Corona.animate(i)
-    st.markdown("<h1 style='text-align: center; font-size:45px;'>Simulation Graph</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; font-size:45px;'>Simulation Graph</h1>",
+                unsafe_allow_html=True)
     plot_graphs(infected, death, recover, days)
+
 
 if __name__ == "__main__":
     main()
