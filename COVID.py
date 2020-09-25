@@ -78,7 +78,6 @@ This is a simulation of the current pandemic using a polar plot. Instead of x an
 </li>
 <br />
 
-**_As always, if you're ever preparing for coding interview click on the logo and use the promo code "clem" for a discount on the platform._**
 ''', unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center; font-size:60px;'>COVID-19 Visualizer</h1>",
             unsafe_allow_html=True)
